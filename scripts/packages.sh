@@ -86,9 +86,14 @@ install_lazygit() {
             ;;
     esac
 
-    local version
-    version="$(curl -fsSL https://api.github.com/repos/jesseduffield/lazygit/releases/latest |
-        sed -n 's/.*"tag_name": *"v\([^"]*\)".*/\1/p')"
+    # Follow the "latest" redirect instead of calling the rate-limited API.
+    local url version
+    url="$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
+        https://github.com/jesseduffield/lazygit/releases/latest || true)"
+    version="${url##*/v}"
+    if [[ -z "$url" || "$version" == "$url" ]]; then
+        version=""
+    fi
     if [[ -z "$version" ]]; then
         warn "Could not look up the latest lazygit release; skipping"
         return
