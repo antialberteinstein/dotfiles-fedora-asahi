@@ -134,9 +134,9 @@ return {
         override = {
           ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
           ["vim.lsp.util.stylize_markdown"] = true,
-          ["cmp.entry.get_documentation"] = true,
         },
-        signature = { auto_open = { enabled = true, trigger = true, luasnip = true, throttle = 50 } },
+        -- blink.cmp shows signature help
+        signature = { enabled = false },
       },
       presets = {
         command_palette = true,
@@ -194,6 +194,7 @@ return {
         { "<leader>g", group = "git" },
         { "<leader>h", group = "git hunk" },
         { "<leader>n", group = "notifications" },
+        { "<leader>p", group = "competitive programming" },
         { "<leader>t", group = "toggle" },
         { "<leader>u", group = "ui" },
         { "<leader>x", group = "diagnostics" },

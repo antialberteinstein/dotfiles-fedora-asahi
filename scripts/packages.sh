@@ -41,11 +41,14 @@ fi
 CLI_PACKAGES=(
     # Shell and terminal tools
     fish tmux git git-lfs gh btop bat ripgrep fd-find
+    fzf zoxide eza
     curl unzip tar xz fontconfig
     # System clipboard for Neovim on Wayland
     wl-clipboard
     # Neovim and what its plugins need (treesitter parsers, Mason servers)
     neovim tree-sitter-cli gcc make nodejs npm python3
+    # C/C++: g++ for competitest, clangd for the language server
+    gcc-c++ clang-tools-extra
     # Python
     uv
     # Containers
@@ -65,8 +68,18 @@ DESKTOP_PACKAGES=(
 packages=("${CLI_PACKAGES[@]}")
 [[ $CLI_ONLY -eq 1 ]] || packages+=("${DESKTOP_PACKAGES[@]}")
 
-info "Installing ${#packages[@]} packages with dnf"
-"${SUDO[@]}" dnf install -y "${packages[@]}"
+# Only call dnf (and sudo) for packages that are not installed yet.
+# --whatprovides also matches virtual names such as nodejs -> nodejs24.
+missing=()
+for pkg in "${packages[@]}"; do
+    rpm -q --whatprovides "$pkg" >/dev/null 2>&1 || missing+=("$pkg")
+done
+if ((${#missing[@]} == 0)); then
+    info "All ${#packages[@]} dnf packages are already installed"
+else
+    info "Installing ${#missing[@]} missing packages: ${missing[*]}"
+    "${SUDO[@]}" dnf install -y "${missing[@]}"
+fi
 
 git lfs install --skip-repo >/dev/null
 
@@ -142,6 +155,11 @@ else
     info "Installing TPM (tmux plugin manager)"
     git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
 fi
+# Install the plugins listed in tmux.conf (needs install.sh to have linked it)
+if [[ -f "$HOME/.config/tmux/tmux.conf" ]]; then
+    info "Installing tmux plugins"
+    "$TPM_DIR/bin/install_plugins" >/dev/null || warn "TPM could not install the tmux plugins"
+fi
 
 # --- Oh My Fish + agnoster theme -----------------------------------------
 
@@ -162,10 +180,13 @@ else
     cp "$omf_saved" "$omf_conf"
     rm -f "$omf_saved"
 fi
-fish -c 'omf install agnoster; omf theme agnoster' || warn "Could not set the agnoster theme"
+if [[ "$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/omf/theme" 2>/dev/null)" != agnoster ]]; then
+    fish -c 'omf install agnoster; omf theme agnoster' || warn "Could not set the agnoster theme"
+fi
 
 info "Done."
-if [[ $CLI_ONLY -eq 0 ]]; then
+# update.sh prints its own summary
+if [[ $CLI_ONLY -eq 0 && -z "${DOTFILES_UPDATING:-}" ]]; then
     cat <<'EOF'
 
 Next steps:

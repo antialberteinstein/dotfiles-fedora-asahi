@@ -1,7 +1,7 @@
--- Language servers: Mason installs them, mason-lspconfig enables them with
--- Neovim's built-in vim.lsp.enable(), nvim-lspconfig provides the defaults.
-local servers = { "lua_ls", "pyright", "html", "cssls", "jsonls", "ts_ls", "tailwindcss" }
-
+-- Language servers. Mason installs them (lua/config/tools.lua), mason-lspconfig
+-- enables the Mason-installed ones with vim.lsp.enable(), nvim-lspconfig
+-- provides each server's defaults. clangd comes from Fedora, so it is enabled
+-- here directly.
 return {
   {
     "mason-org/mason.nvim",
@@ -20,13 +20,12 @@ return {
     dependencies = {
       "mason-org/mason.nvim",
       "neovim/nvim-lspconfig",
-      "hrsh7th/cmp-nvim-lsp",
+      "saghen/blink.cmp",
     },
-    opts = { ensure_installed = servers },
-    config = function(_, opts)
+    config = function()
       -- Completion capabilities for every server
       vim.lsp.config("*", {
-        capabilities = require("cmp_nvim_lsp").default_capabilities(),
+        capabilities = require("blink.cmp").get_lsp_capabilities(),
       })
 
       vim.lsp.config("lua_ls", {
@@ -38,7 +37,18 @@ return {
         },
       })
 
-      require("mason-lspconfig").setup(opts)
+      -- C/C++: assume C++17 when a project has no compile_commands.json,
+      -- which is the usual case for competitive programming files.
+      vim.lsp.config("clangd", {
+        init_options = { fallbackFlags = { "-std=c++17" } },
+      })
+      if vim.fn.executable("clangd") == 1 then
+        vim.lsp.enable("clangd")
+      end
+
+      require("config.tools").ensure()
+      -- Enables every server Mason has installed
+      require("mason-lspconfig").setup()
     end,
   },
 
@@ -64,18 +74,22 @@ return {
   -- LSP progress in the corner
   { "j-hui/fidget.nvim", event = "LspAttach", opts = {} },
 
-  -- Pictograms in the completion menu
-  { "onsails/lspkind.nvim", lazy = true },
-
   {
     "neovim/nvim-lspconfig",
     lazy = true,
     init = function()
       -- Neovim already maps grn (rename), gra (code action), grr (references),
       -- gri (implementation), gO (symbols) and K (hover). These add the rest.
+      -- Formatting is <leader>cf from conform.nvim (lua/plugins/formatting.lua).
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp_keymaps", { clear = true }),
         callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          -- pyright answers hover in Python files; ruff only lints and formats
+          if client and client.name == "ruff" then
+            client.server_capabilities.hoverProvider = false
+          end
+
           local function map(mode, lhs, rhs, desc)
             vim.keymap.set(mode, lhs, rhs, { buffer = args.buf, desc = desc })
           end
@@ -84,9 +98,6 @@ return {
           map("n", "<leader>ca", vim.lsp.buf.code_action, "Code action")
           map("n", "<leader>cr", vim.lsp.buf.rename, "Rename symbol")
           map("n", "<leader>ct", vim.lsp.buf.type_definition, "Type definition")
-          map({ "n", "x" }, "<leader>cf", function()
-            vim.lsp.buf.format({ async = true })
-          end, "Format")
           map("n", "<leader>ch", function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = args.buf }), { bufnr = args.buf })
           end, "Toggle inlay hints")

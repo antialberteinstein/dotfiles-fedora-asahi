@@ -31,11 +31,15 @@ map("n", "<S-l>", "<Cmd>bnext<CR>", { desc = "Next buffer" })
 map("n", "<S-h>", "<Cmd>bprevious<CR>", { desc = "Previous buffer" })
 map("n", "<leader>bd", "<Cmd>bdelete<CR>", { desc = "Delete buffer" })
 
--- Windows
-map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
-map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
-map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
+-- kitty keeps Ctrl+T/W/V/Q, so Neovim's commands on those keys move here.
+-- Windows: <leader>w works like Ctrl+W (<leader>wv split, <leader>wq close...).
+-- Move between splits with Ctrl+h/j/k/l (lua/plugins/navigation.lua).
+map("n", "<leader>w", "<C-w>", { remap = true, desc = "+window (like Ctrl+W)" })
+-- Visual block mode (Ctrl+V)
+map("n", "<leader>v", "<C-v>", { desc = "Visual block mode" })
+-- Insert a character literally (Ctrl+V in insert/command mode)
+map({ "i", "c" }, "<M-v>", "<C-v>", { desc = "Insert next key literally" })
+-- Jump back after gd/K: use Ctrl+O (Ctrl+T is kitty's new-tab key)
 
 -- Leave terminal mode with a double Esc
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
