@@ -1,125 +1,182 @@
-# My Dotfiles
+# dotfiles-fedora-asahi
 
-Welcome to my personal dotfiles repository. This collection contains configurations for my development environment, including Neovim, Fish shell, Hyprland, and more. This repository is made for Linux users enjoying chilling ricing desktop. MacOS users can also use the config for their installable apps (Neovim, Fish shell, tmux, kitty)
+[![CI](https://github.com/antialberteinstein/dotfiles-fedora-asahi/actions/workflows/ci.yml/badge.svg)](https://github.com/antialberteinstein/dotfiles-fedora-asahi/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## 📂 Repository Structure
+Dotfiles for **Fedora Asahi Remix** on Apple Silicon Macs with **KDE Plasma**:
+Neovim, fish, kitty, tmux and git, plus scripts that install everything from
+the official Fedora repositories.
 
-- **`.config/`**: Configuration files for various applications (Neovim, Hyprland, Waybar, etc.).
-- **`scripts/`**: Automated setup scripts for different Linux distributions.
-- **`.bashrc`**: Bash configuration file.
-- **`Pictures/`**: Wallpapers and other assets (if applicable).
+The configs are symlinked from this repository, so you can edit them in place,
+commit, and pull updates on any machine.
 
-## 🚀 Installation
+<!-- Screenshot: add one at docs/screenshot.png and uncomment the line below.
+![Neovim, kitty and fish on Fedora Asahi](docs/screenshot.png)
+-->
 
-### Option 1: Clone Repository (Recommended)
+## What's inside
 
-It is recommended to clone this repository to your home directory or a specific `dotfiles` folder.
+| Path | What it configures |
+| --- | --- |
+| `.config/nvim` | Neovim 0.12 with lazy.nvim, LSP, treesitter, Telescope, Neo-tree, Tokyo Night |
+| `.config/fish` | fish shell with Oh My Fish and the agnoster theme |
+| `.config/kitty` | kitty terminal, JetBrains Mono Nerd Font, Catppuccin Macchiato |
+| `.config/tmux` | tmux with TPM, mouse support, `\|` and `-` splits |
+| `.config/git` | git with Git LFS; your name and email stay out of the repo |
+| `.bashrc` | bash, for when you are not in fish |
+| `install.sh` / `uninstall.sh` | link or unlink the configs |
+| `scripts/packages.sh` | install the packages these configs need |
+| `scripts/battery-limit.sh` | keep the battery between 70% and 80% |
 
-```bash
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+## Requirements
+
+- An Apple Silicon Mac running Fedora Asahi Remix 44 with KDE Plasma
+- `git` and `sudo`
+
+Regular Fedora 44 on x86_64 should work too, except for the battery limit,
+but Fedora Asahi is the only setup that is tested.
+
+## Install
+
+```sh
+git clone https://github.com/antialberteinstein/dotfiles-fedora-asahi.git ~/dotfiles-fedora-asahi
+cd ~/dotfiles-fedora-asahi
+
+./install.sh                 # symlink the configs (asks for your git name and email)
+./scripts/packages.sh        # packages, fonts, lazygit, TPM, Oh My Fish
+./scripts/battery-limit.sh   # optional: charge limit 70-80%
+chsh -s /usr/bin/fish        # optional: make fish your login shell
 ```
 
-### Option 2: Manual Installation (Symlinking/Copying)
+Anything already at a target path is moved to `<name>.bak-<timestamp>` before
+it is replaced, so nothing is lost. Both scripts are safe to run again.
+Use `./install.sh --dry-run` to see what would change first.
 
-If you cannot clone directly or prefer manual control, you can assume the repository is located at `~/dotfiles` (or wherever you downloaded it) and link the files:
+Then finish two things by hand:
 
-#### 1. Configuration Files (`.config`)
+1. **Vietnamese input (Fcitx5 + Unikey):** System Settings > Keyboard >
+   Virtual Keyboard > choose **Fcitx 5**, log out and back in, then add
+   **Unikey** under System Settings > Input Method. Switch with `Ctrl+Space`.
+2. **Neovim:** start `nvim` once. lazy.nvim installs the plugins, then
+   treesitter parsers and language servers download in the background.
 
-Link or copy directories from `.config/` to your local `~/.config/`.
+### Packages
 
-```bash
-# Example: Linking Neovim config
-ln -s ~/dotfiles/.config/nvim ~/.config/nvim
+`scripts/packages.sh` uses only the official Fedora repositories (no COPR):
 
-# Example: Linking all configs (creates symlinks)
-cp -rs ~/dotfiles/.config/* ~/.config/
-# OR manually copy if you prefer detached configs
-cp -r ~/dotfiles/.config/* ~/.config/
+- **Shell and CLI:** fish, tmux, git, git-lfs, gh, btop, bat, ripgrep, fd-find, wl-clipboard
+- **Neovim:** neovim, tree-sitter-cli, gcc, make, nodejs, npm, python3
+- **Python:** uv
+- **Containers:** podman, podman-compose, toolbox
+- **Desktop:** kitty, fcitx5, fcitx5-unikey, kcm-fcitx5, fcitx5-autostart, snapper
+
+It also installs [lazygit](https://github.com/jesseduffield/lazygit) from its
+release page (it is not in the Fedora repositories), JetBrains Mono Nerd Font,
+TPM and Oh My Fish. Pass `--cli-only` to skip the desktop packages, for
+example inside a toolbox.
+
+## Update
+
+```sh
+cd ~/dotfiles-fedora-asahi
+git pull
 ```
 
-**Included Configs:**
-- `nvim` (Neovim)
-- `fish` (Fish Shell)
-- `hypr` (Hyprland Window Manager)
-- `waybar` (Status Bar)
-- `dunst` (Notifications)
-- `kitty` (Terminal Emulator)
-- `tmux` (Terminal Multiplexer)
-- `git` (Git Config)
-- `gtk-3.0` / `gtk-4.0` (GTK Themes)
+The configs are symlinks, so changes apply right away. In Neovim, run
+`:Lazy sync` to match the plugin versions in `lazy-lock.json`.
 
-#### 2. Shell Configuration
+## Uninstall
 
-Link the `.bashrc` if you use Bash:
-
-```bash
-ln -s ~/dotfiles/.bashrc ~/.bashrc
+```sh
+./uninstall.sh
 ```
 
-## 🛠 Automated Setup Scripts
+This removes only the symlinks that point into this repository and tells you
+where your backups are. Installed packages are left alone.
 
-This repository includes scripts to automate package installation and environment setup for **Fedora**, **Ubuntu**, and **Arch Linux**.
+## Neovim keymaps
 
-> **Note:** Run these scripts from their respective directories.
+The leader key is `Space`. Press it and wait to see every mapping, or press
+`?` to search them.
 
-### 🐧 Fedora
+| Keys | Action |
+| --- | --- |
+| `Space e` | Toggle the file explorer |
+| `Space ff` / `Space fg` | Find files / search in files |
+| `Space fb` / `Space fr` | Open buffers / recent files |
+| `Space fc` / `Space fk` | Commands / keymaps |
+| `Ctrl+s` | Save |
+| `Ctrl+/` | Toggle comment (also `gcc`, and `gc` on a selection) |
+| `Shift+h` / `Shift+l` | Previous / next buffer |
+| `Space bd` | Close buffer |
+| `Ctrl+\` | Floating terminal |
+| `Space gg` | LazyGit |
+| `gd` / `K` | Go to definition / hover docs |
+| `grr` / `gri` | References / implementations |
+| `Space ca` / `Space cr` / `Space cf` | Code action / rename / format |
+| `Space xx` | Diagnostics list |
+| `]c` / `[c` | Next / previous git hunk |
+| `Space hs` / `Space hr` / `Space hp` | Stage / reset / preview hunk |
 
-**Location:** `scripts/fedora/`
+In [Neovide](https://neovide.dev) the VS Code-style `Super` shortcuts work as
+well (`Super+s`, `Super+p`, `Super+b`, `Super+/`, ...). Terminals never
+receive `Super`, so they are not mapped there.
 
-1.  **Root Setup (Packages & Hyprland):**
-    ```bash
-    cd ~/dotfiles/scripts/fedora
-    sudo ./01-setup-root.sh
-    ```
-2.  **Environment Setup (Conda/Python):**
-    ```bash
-    ./02-setup.sh
-    ```
-3.  **UI & Fonts:**
-    ```bash
-    ./03-setup.sh
-    ```
-4.  **Applications (Obsidian):**
-    ```bash
-    ./04-setup.sh
-    ```
-5.  **Shell Plugins (Tmux/Fish):**
-    ```bash
-    ./05-setup.sh
-    ```
+## tmux keys
 
-### 🟠 Ubuntu / Debian
+The prefix is the default `Ctrl+b`.
 
-**Location:** `scripts/ubuntu/`
+| Keys | Action |
+| --- | --- |
+| `prefix \|` / `prefix -` | Split side by side / top and bottom |
+| `Alt+arrows` | Move between panes |
+| `Alt+h/j/k/l` | Resize the pane |
+| `Ctrl+Left` / `Ctrl+Right` | Previous / next window |
+| `prefix z` | Zoom the pane |
+| `prefix g` | LazyGit in a new pane |
+| `prefix r` | Reload the config |
 
-1.  **Root Setup:**
-    ```bash
-    cd ~/dotfiles/scripts/ubuntu
-    sudo ./01-setup-root.sh
-    ```
-    *Note: Installing Hyprland on Ubuntu can be complex. The script sets up dependencies but may require manual steps for the WM itself.*
+## Python with toolbox and uv
 
-2.  **Follow the same order as Fedora (02-05).**
+Keep the host system clean and do project work in a toolbox:
 
-### 🔵 Arch Linux
+```sh
+toolbox create dev
+toolbox enter dev
+~/dotfiles-fedora-asahi/scripts/packages.sh --cli-only   # optional: same tools inside
 
-**Location:** `scripts/arch/`
+uv init my-project && cd my-project
+uv add numpy
+uv run python main.py
+```
 
-1.  **Root Setup:**
-    ```bash
-    cd ~/dotfiles/scripts/arch
-    sudo ./01-setup-root.sh
-    ```
-    *Note: The script checks for `yay` to install AUR packages (like `swaylock-effects-git`). Install `yay` or `paru` beforehand if possible.*
+Services such as databases are better run on the host with
+`podman compose up -d`; the toolbox shares the host network, so your code
+reaches them on `localhost`.
 
-2.  **Follow the same order as Fedora (02-05).**
+## Apple Silicon notes
 
-## 🧩 Key Components
+- **Charge limit:** KDE's own setting resets to 100% after a reboot on Asahi,
+  which is why `scripts/battery-limit.sh` installs a systemd service instead.
+  Run `./scripts/battery-limit.sh --disable` to charge to 100% again.
+- **Sleep:** suspend works but drains the battery faster than macOS does.
+  Shut down for long breaks.
+- **Containers:** pick images with an `arm64` variant.
 
-- **Window Manager:** [Hyprland](https://hyprland.org/) (Wayland)
-- **Editor:** [Neovim](https://neovim.io/) (Custom config in `.config/nvim`)
-- **Shell:** [Fish](https://fishshell.com/) with [Oh My Fish](https://github.com/oh-my-fish/oh-my-fish)
-- **Terminal:** [Kitty](https://sw.kovidgoyal.net/kitty/)
-- **Bar:** [Waybar](https://github.com/Alexays/Waybar)
-- **Launcher:** [Rofi](https://github.com/lbonn/rofi) (Wayland fork)
+## Contributing
+
+Bug reports and fixes are welcome, especially for other Apple Silicon models.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Credits
+
+- Adapted from [antialberteinstein/dotfiles](https://github.com/antialberteinstein/dotfiles).
+- [Catppuccin for kitty](https://github.com/catppuccin/kitty) (MIT) and
+  [Tokyo Night](https://github.com/folke/tokyonight.nvim) color themes.
+- [Asahi Linux](https://asahilinux.org) and the Fedora Asahi SIG for making
+  Linux on Apple Silicon possible.
+
+## License
+
+[MIT](LICENSE) © Nhat Nguyen

@@ -1,6 +1,8 @@
-[user]
-	name = Nhat Nguyen
-	email = antialberteinstein@gmail.com
+# Your name and email live in ~/.config/git/config.local (created by
+# install.sh) so they are never committed to this repository.
+[include]
+	path = ~/.config/git/config.local
+
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
