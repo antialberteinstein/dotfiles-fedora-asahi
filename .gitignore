@@ -9,33 +9,18 @@
 
 # Un-ignore necessary parent directories first
 !.config/
-!.config/hypr/
-!.config/waybar/
 !.config/kitty/
 !.config/fish/
 !.config/tmux/
 !.config/nvim/
-!.config/gtk-3.0/
-!.config/gtk-4.0/
-!.config/dunst/
 !.config/git/
 
 # Now un-ignore all contents under the specified config subdirectories
-!.config/hypr/**
-!.config/waybar/**
 !.config/kitty/**
 !.config/fish/**
 !.config/tmux/**
 !.config/nvim/**
-!.config/gtk-3.0/**
-!.config/gtk-4.0/**
-!.config/dunst/**
 !.config/git/**
-
-# Un-ignore Pictures/Background
-!Pictures/
-!Pictures/Background/
-!Pictures/Background/**
 
 # Un-ignore scripts directory
 !scripts/
@@ -47,3 +32,14 @@
 
 # (Optional) If you have other root files/dirs to track, add them here
 # Example: !.bashrc
+
+# ------------------------------
+# Re-ignore generated / vendored files
+# ------------------------------
+**/.DS_Store
+.config/nvim/plugin/packer_compiled.lua
+# tmux plugins are installed by TPM (see scripts/*/05-setup.sh)
+.config/tmux/plugins/
+.config/tmux/plugins-backup/
+# fish rewrites this state file constantly
+.config/fish/fish_variables
