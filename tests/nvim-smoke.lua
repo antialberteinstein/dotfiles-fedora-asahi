@@ -15,12 +15,17 @@ local sample = vim.fn.tempname() .. ".py"
 vim.fn.writefile({ "def greet(name: str) -> str:", "    return 'hi ' + name", "" }, sample)
 
 if full then
-  -- Treesitter parsers
-  local ok, err = pcall(function()
-    require("nvim-treesitter").install({ "lua", "python", "bash", "fish", "markdown" }):wait(300000)
-  end)
-  if not ok then
-    fail("treesitter install: " .. tostring(err))
+  -- Treesitter parsers: wait for the install the config started at launch
+  local parsers = require("config.treesitter")
+  parsers.install_all()
+  if not parsers.wait(600000) then
+    fail("treesitter parser installs did not finish in time")
+  end
+  local installed = require("nvim-treesitter").get_installed()
+  for _, lang in ipairs({ "lua", "python", "bash", "fish", "markdown" }) do
+    if not vim.list_contains(installed, lang) then
+      fail("treesitter parser missing: " .. lang)
+    end
   end
 
   -- Language servers through Mason (lua_ls and pyright prove the pipeline)

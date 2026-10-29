@@ -1,29 +1,7 @@
 -- nvim-treesitter (main branch) installs parsers and queries; Neovim itself
 -- does the highlighting. Needs tree-sitter-cli and a C compiler.
-local parsers = {
-  "bash",
-  "c",
-  "cpp",
-  "css",
-  "dockerfile",
-  "fish",
-  "html",
-  "java",
-  "javascript",
-  "json",
-  "lua",
-  "markdown",
-  "markdown_inline",
-  "python",
-  "query",
-  "toml",
-  "tsx",
-  "typescript",
-  "vim",
-  "vimdoc",
-  "yaml",
-}
-
+-- Parser installs go through lua/config/treesitter.lua so the same parser is
+-- never installed twice at the same time.
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -31,8 +9,17 @@ return {
     lazy = false,
     build = ":TSUpdate",
     config = function()
-      local ts = require("nvim-treesitter")
-      ts.install(parsers)
+      local parsers = require("config.treesitter")
+      parsers.install_all()
+
+      local function start(buf, lang)
+        if not vim.api.nvim_buf_is_valid(buf) then
+          return
+        end
+        if pcall(vim.treesitter.start, buf, lang) and lang ~= "yaml" then
+          vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+      end
 
       vim.api.nvim_create_autocmd("FileType", {
         group = vim.api.nvim_create_augroup("treesitter_start", { clear = true }),
@@ -49,22 +36,9 @@ return {
             return
           end
 
-          -- Install missing parsers on demand, then start highlighting
-          if not vim.list_contains(ts.get_installed(), lang) then
-            if not vim.list_contains(ts.get_available(), lang) then
-              return
-            end
-            ts.install(lang):await(function()
-              if vim.api.nvim_buf_is_valid(buf) then
-                pcall(vim.treesitter.start, buf, lang)
-              end
-            end)
-            return
-          end
-
-          if pcall(vim.treesitter.start, buf, lang) and lang ~= "yaml" then
-            vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-          end
+          parsers.when_installed(lang, function()
+            start(buf, lang)
+          end)
         end,
       })
     end,
