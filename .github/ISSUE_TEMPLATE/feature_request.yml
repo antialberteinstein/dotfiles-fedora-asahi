@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest a new tool, plugin or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe what you are trying to do and what gets in the way today.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What do you suggest?
+      description: The tool, plugin, keymap or change you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Fit with the project
+      options:
+        - label: It is available from the official Fedora repositories, or from an upstream release (no COPR)
+        - label: It works on Apple Silicon (aarch64)

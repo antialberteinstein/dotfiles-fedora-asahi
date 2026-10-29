@@ -1,0 +1,78 @@
+name: Bug report
+description: Something in these dotfiles does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! The more detail you give, the faster it can be fixed.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run ./install.sh
+        2. Open nvim
+        3. Press Space ff
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Install scripts
+        - Neovim
+        - fish
+        - kitty
+        - tmux
+        - git
+        - Battery limit
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: mac
+    attributes:
+      label: Mac model
+      placeholder: MacBook Air M2 (2022)
+    validations:
+      required: true
+
+  - type: input
+    id: fedora
+    attributes:
+      label: Fedora Asahi Remix version
+      description: Output of `cat /etc/fedora-release`
+      placeholder: Fedora Linux Asahi Remix release 44
+    validations:
+      required: true
+
+  - type: dropdown
+    id: desktop
+    attributes:
+      label: Desktop
+      options:
+        - KDE Plasma
+        - GNOME
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error output
+      description: Paste terminal output, `:messages` or `:checkhealth` from Neovim if relevant.
+      render: text
