@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ShellCheck
+        run: shellcheck install.sh uninstall.sh scripts/*.sh scripts/bin/*
+
+      - name: StyLua
+        uses: JohnnyMorganz/stylua-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          args: --check .config/nvim tests
+
+  fedora-asahi:
+    name: Install on Fedora 44 (aarch64)
+    # Apple Silicon is aarch64, so test on an ARM runner in a Fedora container.
+    runs-on: ubuntu-24.04-arm
+    container: registry.fedoraproject.org/fedora:44
+    timeout-minutes: 40
+    env:
+      TERM: xterm-256color
+      DOTFILES_GIT_NAME: CI
+      DOTFILES_GIT_EMAIL: ci@example.com
+    steps:
+      - name: Install git for checkout
+        run: dnf install -y git
+
+      - uses: actions/checkout@v4
+
+      - name: Link configs
+        run: ./install.sh
+
+      - name: Install packages
+        run: ./scripts/packages.sh --cli-only
+
+      - name: Check links and git identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in .bashrc .config/fish .config/kitty .config/nvim .config/tmux .config/git/config; do
+            target="$(readlink "$HOME/$path")"
+            [[ "$target" == "$GITHUB_WORKSPACE/$path" ]] || { echo "::error::$path -> $target"; exit 1; }
+          done
+          [[ "$(cd /tmp && git config user.name)" == "CI" ]]
+          [[ "$(cd /tmp && git config filter.lfs.required)" == "true" ]]
+
+      - name: Second run changes nothing
+        shell: bash
+        run: |
+          ./install.sh | tee second-run.log
+          if grep -E '^\s+(backup|link) ' second-run.log; then
+            echo "::error::install.sh is not idempotent"
+            exit 1
+          fi
+
+      - name: Shell configs load
+        run: |
+          fish --no-execute .config/fish/config.fish
+          fish -c 'echo fish OK'
+          bash -n .bashrc
+          tmux -L ci -f "$HOME/.config/tmux/tmux.conf" new-session -d 'sleep 5'
+          tmux -L ci kill-server
+
+      - name: Neovim plugins install
+        run: nvim --headless "+Lazy! sync" +qa
+
+      - name: Neovim smoke test (parsers, LSP, keymaps)
+        env:
+          SMOKE_FULL: "1"
+        run: nvim --headless -c "luafile tests/nvim-smoke.lua"
+
+      - name: Uninstall removes the links
+        shell: bash
+        run: |
+          ./uninstall.sh
+          [[ ! -L "$HOME/.config/nvim" ]]
