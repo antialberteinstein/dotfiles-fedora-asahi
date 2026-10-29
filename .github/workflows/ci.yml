@@ -54,7 +54,8 @@ jobs:
           set -euo pipefail
           missing=()
           for pkg in $(./scripts/packages.sh --print); do
-            dnf -q repoquery --arch=aarch64,noarch --qf '%{name}\n' "$pkg" | grep -qx "$pkg" || missing+=("$pkg")
+            # --whatprovides also matches virtual names such as nodejs -> nodejs24
+            dnf -q repoquery --arch=aarch64,noarch --whatprovides "$pkg" --qf '%{name}\n' | grep -q . || missing+=("$pkg")
           done
           if (( ${#missing[@]} )); then
             echo "::error::Not found in Fedora 44 aarch64: ${missing[*]}"
