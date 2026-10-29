@@ -1,12 +1,13 @@
 -- Format on save with conform.nvim. Languages without a formatter listed here
 -- fall back to their language server (e.g. clangd for C/C++).
--- Toggle with <leader>uf, or format by hand with <leader>cf.
+-- <leader>cf formats, <leader>ct toggles format on save, <leader>ci shows info.
 return {
   {
     "stevearc/conform.nvim",
     event = "BufWritePre",
     cmd = "ConformInfo",
     keys = {
+      { "<leader>ci", "<Cmd>ConformInfo<CR>", desc = "Formatter info" },
       {
         "<leader>cf",
         function()
@@ -16,7 +17,7 @@ return {
         desc = "Format",
       },
       {
-        "<leader>uf",
+        "<leader>ct",
         function()
           vim.g.disable_autoformat = not vim.g.disable_autoformat
           vim.notify("Format on save " .. (vim.g.disable_autoformat and "off" or "on"))

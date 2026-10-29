@@ -1,10 +1,19 @@
+-- Terminals with toggleterm. Ctrl+` toggles the floating terminal from normal,
+-- insert and terminal mode; <leader>t picks a layout.
 return {
   {
     "akinsho/toggleterm.nvim",
     version = "*",
     cmd = { "ToggleTerm", "TermExec" },
     keys = {
-      { [[<C-\>]], desc = "Toggle terminal" },
+      { "<C-`>", mode = { "n", "i" }, desc = "Toggle terminal" },
+      -- Without the kitty keyboard protocol (e.g. tmux without extended keys)
+      -- Ctrl+` arrives as Ctrl+@. Not mapped in insert mode, where that is
+      -- Ctrl+Space for completion.
+      { "<C-@>", "<Cmd>ToggleTerm<CR>", mode = { "n", "t" }, desc = "Toggle terminal" },
+      { "<leader>tt", "<Cmd>ToggleTerm direction=float<CR>", desc = "Floating terminal" },
+      { "<leader>th", "<Cmd>ToggleTerm direction=horizontal<CR>", desc = "Horizontal terminal" },
+      { "<leader>tv", "<Cmd>ToggleTerm direction=vertical size=80<CR>", desc = "Vertical terminal" },
       { "<leader>gg", "<Cmd>lua LazygitToggle()<CR>", desc = "LazyGit" },
     },
     init = function()
@@ -21,7 +30,7 @@ return {
       end
     end,
     opts = {
-      open_mapping = [[<C-\>]],
+      open_mapping = "<C-`>",
       direction = "float",
       shade_terminals = true,
       start_in_insert = true,

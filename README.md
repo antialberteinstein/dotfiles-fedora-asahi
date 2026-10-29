@@ -120,33 +120,38 @@ where your backups are. Installed packages are left alone.
 
 ## Neovim keymaps
 
-The leader key is `Space`. Press it and wait to see every mapping, or press
-`?` to search them.
+The leader key is `Space`. Every plugin has its own prefix:
+**`Space` + plugin letter + action letter**. Press `Space` and wait to see the
+groups, or press `?` to search all keymaps.
+
+| Prefix | Plugin | Keys |
+| --- | --- | --- |
+| `Space f` | find (Telescope) | `ff` files · `fg` grep · `fw` word under cursor · `fb` buffers · `fr` recent · `fh` help · `fc` commands · `fk` keymaps · `fd` diagnostics · `fe` file browser · `ft` TODOs · `f.` resume |
+| `Space e` | explorer (Neo-tree) | `ee` toggle · `er` reveal current file · `eg` git status · `eb` buffers |
+| `Space b` | buffers (bufferline) | `bn` next · `bp` previous · `bd` delete · `bo` close others · `bj` jump · `bc` pick to close |
+| `Space l` | LSP | `la` code action · `lr` rename · `lt` type definition · `ll` line diagnostics · `lh` inlay hints · `li` info |
+| `Space c` | format (conform) | `cf` format · `ct` toggle format on save · `ci` formatter info |
+| `Space g` | git (gitsigns, LazyGit) | `gg` LazyGit · `gs`/`gr` stage/reset hunk · `gS`/`gR` stage/reset file · `gp`/`gi` preview hunk · `gb` blame line · `gB` toggle line blame · `gd`/`gD` diff · `gw` word diff |
+| `Space x` | diagnostics (Trouble) | `xx` project · `xb` buffer · `xs` symbols · `xr` references · `xq` quickfix |
+| `Space t` | terminal (toggleterm) | `tt` floating · `th` horizontal · `tv` vertical |
+| `Space n` | notifications (noice) | `nd` dismiss · `nh` history · `nl` last message |
+| `Space p` | competitive programming (competitest) | `pp` receive problem · `pc` receive contest · `pr` run tests · `pa` add test · `pe` edit test · `pd` delete test · `pu` results |
+| `Space u` | UI toggles | `uc` color preview · `uw` line wrap · `un` relative numbers |
+| `Space L` / `Space M` | lazy.nvim / Mason | plugin manager / language servers and tools |
+| `Space w` / `Space v` | built in | window commands like `Ctrl+W` (`Space wv` split, `Space wq` close) / visual block like `Ctrl+V` |
+
+Keys without the leader:
 
 | Keys | Action |
 | --- | --- |
+| `` Ctrl+` `` | Toggle the floating terminal (normal, insert and terminal mode) |
 | `Ctrl+h/j/k/l` | Move between splits, and tmux panes inside tmux |
-| `Space w…` | Window commands, like `Ctrl+W` (`Space wv` split, `Space wq` close, `Space w=` equalize) |
-| `Space v` | Visual block mode (`Ctrl+V`) |
-| `Space e` | Toggle the file explorer |
-| `Space ff` / `Space fg` | Find files / search in files |
-| `Space fb` / `Space fr` | Open buffers / recent files |
-| `Space fc` / `Space fk` | Commands / keymaps |
+| `Shift+h` / `Shift+l` | Previous / next buffer |
 | `Ctrl+s` | Save |
 | `Ctrl+/` | Toggle comment (also `gcc`, and `gc` on a selection) |
-| `Shift+h` / `Shift+l` | Previous / next buffer |
-| `Space bd` | Close buffer |
-| `Ctrl+\` | Floating terminal |
-| `Space gg` | LazyGit |
-| `gd` / `K` / `Ctrl+O` | Go to definition / hover docs / jump back |
+| `gd` / `gD` / `K` / `Ctrl+O` | Definition / declaration / hover docs / jump back |
 | `grr` / `gri` | References / implementations |
-| `Space ca` / `Space cr` / `Space cf` | Code action / rename / format |
-| `Space uf` | Toggle format on save |
-| `Space xx` | Diagnostics list |
 | `]c` / `[c` | Next / previous git hunk |
-| `Space hs` / `Space hr` / `Space hp` | Stage / reset / preview hunk |
-| `Space pp` / `Space pr` | Receive a problem / run its test cases (competitest) |
-| `Space pa` / `Space pe` | Add / edit a test case |
 
 Completion: `Enter` accepts, `Tab`/`Shift+Tab` move through the list and
 snippet fields, `Ctrl+Space` opens the menu.
@@ -164,6 +169,10 @@ Codeforces (or other judge) problem. `Space pr` compiles with
 **Keys kitty keeps:** `Ctrl+T` new tab, `Ctrl+W` close tab, `Ctrl+V` paste,
 `Ctrl+Q` quit, `Ctrl+C` copy when text is selected. That is why Neovim uses
 `Space w`, `Space v`, `Alt+V` (insert a key literally) and `Ctrl+O` instead.
+
+Inside tmux, `` Ctrl+` `` reaches Neovim thanks to tmux's extended keys
+(set in `10-settings.conf`). If it ever does not, `Space tt` opens the same
+terminal.
 
 In [Neovide](https://neovide.dev) the VS Code-style `Super` shortcuts work as
 well (`Super+s`, `Super+p`, `Super+b`, `Super+/`, ...). Terminals never
