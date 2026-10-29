@@ -1,5 +1,9 @@
--- My config
-require'nguyen.settings'
-require'nguyen.keybinds'
-require'plugins'
+-- Leader keys must be set before lazy.nvim loads any plugin.
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 
+require("config.options")
+require("config.keymaps")
+require("config.autocmds")
+require("config.neovide")
+require("config.lazy")
