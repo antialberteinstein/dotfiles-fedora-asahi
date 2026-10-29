@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: ShellCheck
-        run: shellcheck install.sh uninstall.sh scripts/*.sh scripts/bin/*
+        run: shellcheck -x install.sh uninstall.sh scripts/*.sh
 
       - name: StyLua
         uses: JohnnyMorganz/stylua-action@v4
@@ -45,6 +45,21 @@ jobs:
         run: dnf install -y git
 
       - uses: actions/checkout@v5
+
+      # CI installs with --cli-only, so check the desktop package names exist
+      # too: one wrong name would make the whole dnf install fail on a laptop.
+      - name: Every package in packages.sh exists in Fedora 44
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=()
+          for pkg in $(./scripts/packages.sh --print); do
+            dnf -q repoquery --arch=aarch64,noarch --qf '%{name}\n' "$pkg" | grep -qx "$pkg" || missing+=("$pkg")
+          done
+          if (( ${#missing[@]} )); then
+            echo "::error::Not found in Fedora 44 aarch64: ${missing[*]}"
+            exit 1
+          fi
 
       - name: Link configs
         run: ./install.sh

@@ -18,7 +18,7 @@ Closes #
 
 ## Checklist
 
-- [ ] `shellcheck` passes for any changed shell script
+- [ ] `shellcheck -x` passes for any changed shell script
 - [ ] `stylua --check .config/nvim tests` passes for any changed Lua
 - [ ] Scripts are still safe to run twice and do not delete user files
 - [ ] No personal data (names, emails, tokens, `/home/<you>` paths)

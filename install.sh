@@ -26,15 +26,8 @@ for arg in "$@"; do
     esac
 done
 
-# source (relative to the repo) -> destination (relative to $HOME)
-LINKS=(
-    ".bashrc:.bashrc"
-    ".config/fish:.config/fish"
-    ".config/kitty:.config/kitty"
-    ".config/nvim:.config/nvim"
-    ".config/tmux:.config/tmux"
-    ".config/git/config:.config/git/config"
-)
+# shellcheck source=scripts/links.sh
+source "$DOTFILES/scripts/links.sh"
 
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
@@ -70,12 +63,6 @@ for entry in "${LINKS[@]}"; do
     link "$DOTFILES/${entry%%:*}" "$HOME/${entry#*:}"
 done
 
-info "Linking helper scripts into ~/.local/bin"
-for script in "$DOTFILES"/scripts/bin/*; do
-    [[ -f "$script" ]] || continue
-    link "$script" "$HOME/.local/bin/$(basename "$script")"
-done
-
 # Git identity lives outside the repo so it never gets committed or shared.
 GIT_LOCAL="$HOME/.config/git/config.local"
 if [[ -f "$GIT_LOCAL" ]]; then
@@ -93,11 +80,19 @@ else
             echo "    [dry-run] write $GIT_LOCAL"
         else
             mkdir -p "$(dirname "$GIT_LOCAL")"
-            printf '[user]\n\tname = %s\n\temail = %s\n' "$name" "$email" > "$GIT_LOCAL"
+            # git config escapes quotes and backslashes in the values for us
+            git config --file "$GIT_LOCAL" user.name "$name"
+            git config --file "$GIT_LOCAL" user.email "$email"
         fi
     else
         warn "No git identity set. Create $GIT_LOCAL or rerun ./install.sh."
     fi
+fi
+
+# ~/.gitconfig is read after ~/.config/git/config and wins on conflicts.
+if [[ -f "$HOME/.gitconfig" ]]; then
+    warn "A ~/.gitconfig file exists and overrides ~/.config/git/config." \
+        "Move what you want to keep into ~/.config/git/config.local, then delete ~/.gitconfig."
 fi
 
 info "Done. Open a new terminal to pick up the shell config."

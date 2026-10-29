@@ -43,7 +43,7 @@ CI runs these on every pull request. Running them first saves a round trip.
 
 ```sh
 # Shell scripts
-shellcheck install.sh uninstall.sh scripts/*.sh scripts/bin/*
+shellcheck -x install.sh uninstall.sh scripts/*.sh
 
 # Lua formatting
 stylua --check .config/nvim tests
