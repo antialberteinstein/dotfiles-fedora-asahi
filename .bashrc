@@ -30,8 +30,3 @@ unset rc
 export PATH=$HOME/Applications/bin:$HOME/scripts/bin/:$PATH
 
 export GIT_CONFIG_GLOBAL=$HOME/.config/git/config
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/home/nhat/.lmstudio/bin"
-# End of LM Studio CLI section
-
