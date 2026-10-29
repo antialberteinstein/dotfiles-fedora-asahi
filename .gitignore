@@ -1,45 +1,12 @@
-# Ignore everything
-*
-# ------------------------------
-# Un-ignore specific files/dirs
-# ------------------------------
+# macOS
+.DS_Store
 
-# Track .gitignore
-!.gitignore
-
-# Un-ignore necessary parent directories first
-!.config/
-!.config/kitty/
-!.config/fish/
-!.config/tmux/
-!.config/nvim/
-!.config/git/
-
-# Now un-ignore all contents under the specified config subdirectories
-!.config/kitty/**
-!.config/fish/**
-!.config/tmux/**
-!.config/nvim/**
-!.config/git/**
-
-# Un-ignore scripts directory
-!scripts/
-!scripts/**
-
-# Misc
-!.bashrc
-!README.md
-
-# (Optional) If you have other root files/dirs to track, add them here
-# Example: !.bashrc
-
-# ------------------------------
-# Re-ignore generated / vendored files
-# ------------------------------
-**/.DS_Store
-.config/nvim/plugin/packer_compiled.lua
-# tmux plugins are installed by TPM (see scripts/*/05-setup.sh)
-.config/tmux/plugins/
-.config/tmux/plugins-backup/
 # fish rewrites this state file constantly
 .config/fish/fish_variables
+
+# tmux plugins are installed by TPM (scripts/packages.sh)
+.config/tmux/plugins/
+.config/tmux/plugins-backup/
+
+# Backups made by install.sh
+*.bak-*

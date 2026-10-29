@@ -11,6 +11,8 @@ if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
 fi
 export PATH
 
+export EDITOR=nvim
+
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
@@ -23,10 +25,3 @@ if [ -d ~/.bashrc.d ]; then
   done
 fi
 unset rc
-
-# Auto start tmux
-
-# Add my specific bin folder to PATH
-export PATH=$HOME/Applications/bin:$HOME/scripts/bin/:$PATH
-
-export GIT_CONFIG_GLOBAL=$HOME/.config/git/config
