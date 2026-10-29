@@ -79,4 +79,12 @@ function M.when_installed(lang, callback)
   end))
 end
 
+--- Block until every running install has finished (used by update.sh).
+---@param timeout_ms integer
+function M.wait(timeout_ms)
+  return vim.wait(timeout_ms, function()
+    return next(pending) == nil
+  end, 200)
+end
+
 return M
