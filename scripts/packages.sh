@@ -163,7 +163,7 @@ fi
 
 # --- Oh My Fish + agnoster theme -----------------------------------------
 
-OMF_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/fish/omf"
+OMF_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/omf"
 if [[ -d "$OMF_DIR" ]]; then
     info "Oh My Fish already installed"
 else
@@ -175,7 +175,7 @@ else
     cp "$omf_conf" "$omf_saved"
     tmp="$(mktemp)"
     curl -fsSL -o "$tmp" https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install
-    fish "$tmp" --noninteractive --yes
+    fish "$tmp" --noninteractive --yes --path="$OMF_DIR"
     rm -f "$tmp"
     cp "$omf_saved" "$omf_conf"
     rm -f "$omf_saved"
