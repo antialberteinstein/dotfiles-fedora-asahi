@@ -4,23 +4,20 @@
 # Uses only the official Fedora repositories (no COPR). Run it as your normal
 # user; it calls sudo for dnf when needed.
 #
-# Usage: ./scripts/packages.sh [--cli-only | --print]
+# Usage: ./scripts/packages.sh [--cli-only]
 #
 #   --cli-only   Skip desktop packages (kitty, Fcitx5, snapper, asahi-battery,
 #                Nerd Font). Useful inside a toolbox or a container.
-#   --print      Print every dnf package name and exit (used by CI).
 
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CLI_ONLY=0
-PRINT=0
 for arg in "$@"; do
     case "$arg" in
         --cli-only) CLI_ONLY=1 ;;
-        --print) PRINT=1 ;;
         -h | --help)
-            sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
+            sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
             exit 0
             ;;
         *)
@@ -64,11 +61,6 @@ DESKTOP_PACKAGES=(
     # Keeps the battery charge limit across reboots on Apple Silicon
     asahi-battery
 )
-
-if [[ $PRINT -eq 1 ]]; then
-    printf '%s\n' "${CLI_PACKAGES[@]}" "${DESKTOP_PACKAGES[@]}"
-    exit 0
-fi
 
 packages=("${CLI_PACKAGES[@]}")
 [[ $CLI_ONLY -eq 1 ]] || packages+=("${DESKTOP_PACKAGES[@]}")
