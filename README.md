@@ -1,5 +1,8 @@
 # dotfiles-fedora-asahi
 
+[![CI](https://github.com/antialberteinstein/dotfiles-fedora-asahi/actions/workflows/ci.yml/badge.svg)](https://github.com/antialberteinstein/dotfiles-fedora-asahi/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Dotfiles for **Fedora Asahi Remix** on Apple Silicon Macs with **KDE Plasma**:
 Neovim, fish, kitty, tmux and git, plus scripts that install everything from
 the official Fedora repositories.

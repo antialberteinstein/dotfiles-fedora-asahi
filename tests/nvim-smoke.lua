@@ -112,6 +112,12 @@ end
 
 if #failures > 0 then
   io.stdout:write("SMOKE TEST FAILED\n  " .. table.concat(failures, "\n  ") .. "\n")
+  -- Surface each failure as an annotation on GitHub Actions
+  if os.getenv("GITHUB_ACTIONS") == "true" then
+    for _, f in ipairs(failures) do
+      io.stdout:write("::error title=Neovim smoke test::" .. f:gsub("[\r\n]", " ") .. "\n")
+    end
+  end
   vim.cmd("cquit 1")
 else
   io.stdout:write(("SMOKE TEST PASSED (%s)\n"):format(full and "full" or "offline"))
