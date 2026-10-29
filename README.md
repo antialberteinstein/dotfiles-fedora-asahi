@@ -1,6 +1,5 @@
 # dotfiles-fedora-asahi
 
-[![CI](https://github.com/antialberteinstein/dotfiles-fedora-asahi/actions/workflows/ci.yml/badge.svg)](https://github.com/antialberteinstein/dotfiles-fedora-asahi/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Dotfiles for **Fedora Asahi Remix** on Apple Silicon Macs with **KDE Plasma**:
