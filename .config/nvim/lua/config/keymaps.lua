@@ -26,10 +26,9 @@ map("n", "<C-_>", "gcc", { remap = true, desc = "Toggle comment" })
 map("x", "<C-/>", "gc", { remap = true, desc = "Toggle comment" })
 map("x", "<C-_>", "gc", { remap = true, desc = "Toggle comment" })
 
--- Buffers
+-- Buffers: quick switching (also <leader>bn / <leader>bp)
 map("n", "<S-l>", "<Cmd>bnext<CR>", { desc = "Next buffer" })
 map("n", "<S-h>", "<Cmd>bprevious<CR>", { desc = "Previous buffer" })
-map("n", "<leader>bd", "<Cmd>bdelete<CR>", { desc = "Delete buffer" })
 
 -- kitty keeps Ctrl+T/W/V/Q, so Neovim's commands on those keys move here.
 -- Windows: <leader>w works like Ctrl+W (<leader>wv split, <leader>wq close...).
@@ -44,5 +43,14 @@ map({ "i", "c" }, "<M-v>", "<C-v>", { desc = "Insert next key literally" })
 -- Leave terminal mode with a double Esc
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
--- Diagnostics
-map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+-- UI toggles
+map("n", "<leader>uw", function()
+  vim.wo.wrap = not vim.wo.wrap
+end, { desc = "Toggle line wrap" })
+map("n", "<leader>un", function()
+  vim.wo.relativenumber = not vim.wo.relativenumber
+end, { desc = "Toggle relative numbers" })
+
+-- Plugin and tool managers
+map("n", "<leader>L", "<Cmd>Lazy<CR>", { desc = "Plugins (lazy.nvim)" })
+map("n", "<leader>M", "<Cmd>Mason<CR>", { desc = "LSP servers and tools (Mason)" })

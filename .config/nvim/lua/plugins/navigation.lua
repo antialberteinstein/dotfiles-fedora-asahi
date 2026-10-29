@@ -5,7 +5,7 @@ return {
     "christoomey/vim-tmux-navigator",
     cmd = { "TmuxNavigateLeft", "TmuxNavigateDown", "TmuxNavigateUp", "TmuxNavigateRight" },
     init = function()
-      -- Only the four directions; Ctrl+\ stays the toggleterm key
+      -- Only the four directions
       vim.g.tmux_navigator_no_mappings = 1
     end,
     keys = {

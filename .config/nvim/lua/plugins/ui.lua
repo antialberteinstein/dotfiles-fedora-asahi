@@ -33,9 +33,12 @@ return {
     version = "*",
     event = "VeryLazy",
     keys = {
-      { "<leader>bp", "<Cmd>BufferLinePick<CR>", desc = "Pick buffer" },
-      { "<leader>bc", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
+      { "<leader>bn", "<Cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
+      { "<leader>bp", "<Cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
+      { "<leader>bd", "<Cmd>bdelete<CR>", desc = "Delete buffer" },
       { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "Close other buffers" },
+      { "<leader>bj", "<Cmd>BufferLinePick<CR>", desc = "Jump to buffer" },
+      { "<leader>bc", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
     },
     opts = {
       options = {
@@ -118,6 +121,13 @@ return {
         end,
         desc = "Message history",
       },
+      {
+        "<leader>nl",
+        function()
+          require("noice").cmd("last")
+        end,
+        desc = "Last message",
+      },
     },
     opts = {
       cmdline = {
@@ -165,7 +175,7 @@ return {
   {
     "catgoose/nvim-colorizer.lua",
     event = { "BufReadPost", "BufNewFile" },
-    keys = { { "<leader>uc", "<Cmd>ColorizerToggle<CR>", desc = "Toggle colour preview" } },
+    keys = { { "<leader>uc", "<Cmd>ColorizerToggle<CR>", desc = "Toggle color preview" } },
     opts = {
       filetypes = { "*" },
       user_default_options = {
@@ -188,16 +198,18 @@ return {
     opts = {
       preset = "modern",
       spec = {
-        { "<leader>b", group = "buffer" },
-        { "<leader>c", group = "code" },
-        { "<leader>f", group = "find" },
-        { "<leader>g", group = "git" },
-        { "<leader>h", group = "git hunk" },
-        { "<leader>n", group = "notifications" },
-        { "<leader>p", group = "competitive programming" },
-        { "<leader>t", group = "toggle" },
-        { "<leader>u", group = "ui" },
-        { "<leader>x", group = "diagnostics" },
+        -- One prefix per plugin: <leader> + plugin letter + action letter
+        { "<leader>b", group = "buffers (bufferline)" },
+        { "<leader>c", group = "format (conform)" },
+        { "<leader>e", group = "explorer (neo-tree)" },
+        { "<leader>f", group = "find (telescope)" },
+        { "<leader>g", group = "git (gitsigns, lazygit)" },
+        { "<leader>l", group = "lsp" },
+        { "<leader>n", group = "notifications (noice)" },
+        { "<leader>p", group = "competitive programming (competitest)" },
+        { "<leader>t", group = "terminal (toggleterm)" },
+        { "<leader>u", group = "ui toggles" },
+        { "<leader>x", group = "diagnostics (trouble)" },
       },
     },
     keys = {

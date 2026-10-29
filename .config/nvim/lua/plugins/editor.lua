@@ -6,8 +6,10 @@ return {
     cmd = "Neotree",
     dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim" },
     keys = {
-      { "<leader>e", "<Cmd>Neotree toggle<CR>", desc = "File explorer" },
-      { "<leader>E", "<Cmd>Neotree reveal<CR>", desc = "Reveal current file" },
+      { "<leader>ee", "<Cmd>Neotree toggle<CR>", desc = "Toggle explorer" },
+      { "<leader>er", "<Cmd>Neotree reveal<CR>", desc = "Reveal current file" },
+      { "<leader>eg", "<Cmd>Neotree float git_status<CR>", desc = "Git status" },
+      { "<leader>eb", "<Cmd>Neotree float buffers<CR>", desc = "Open buffers" },
     },
     -- Open neo-tree instead of netrw when starting with a directory: nvim .
     init = function()
@@ -149,7 +151,7 @@ return {
     cmd = "Trouble",
     keys = {
       { "<leader>xx", "<Cmd>Trouble diagnostics toggle<CR>", desc = "Diagnostics (project)" },
-      { "<leader>xX", "<Cmd>Trouble diagnostics toggle filter.buf=0<CR>", desc = "Diagnostics (buffer)" },
+      { "<leader>xb", "<Cmd>Trouble diagnostics toggle filter.buf=0<CR>", desc = "Diagnostics (buffer)" },
       { "<leader>xs", "<Cmd>Trouble symbols toggle focus=false<CR>", desc = "Symbols" },
       { "<leader>xr", "<Cmd>Trouble lsp toggle focus=false win.position=right<CR>", desc = "LSP references" },
       { "<leader>xq", "<Cmd>Trouble qflist toggle<CR>", desc = "Quickfix list" },

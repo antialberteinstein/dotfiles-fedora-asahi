@@ -80,7 +80,7 @@ return {
     init = function()
       -- Neovim already maps grn (rename), gra (code action), grr (references),
       -- gri (implementation), gO (symbols) and K (hover). These add the rest.
-      -- Formatting is <leader>cf from conform.nvim (lua/plugins/formatting.lua).
+      -- LSP actions live under <leader>l; formatting is <leader>cf (conform).
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp_keymaps", { clear = true }),
         callback = function(args)
@@ -95,10 +95,12 @@ return {
           end
           map("n", "gd", vim.lsp.buf.definition, "Go to definition")
           map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
-          map("n", "<leader>ca", vim.lsp.buf.code_action, "Code action")
-          map("n", "<leader>cr", vim.lsp.buf.rename, "Rename symbol")
-          map("n", "<leader>ct", vim.lsp.buf.type_definition, "Type definition")
-          map("n", "<leader>ch", function()
+          map({ "n", "x" }, "<leader>la", vim.lsp.buf.code_action, "Code action")
+          map("n", "<leader>lr", vim.lsp.buf.rename, "Rename symbol")
+          map("n", "<leader>lt", vim.lsp.buf.type_definition, "Type definition")
+          map("n", "<leader>ll", vim.diagnostic.open_float, "Line diagnostics")
+          map("n", "<leader>li", "<Cmd>checkhealth vim.lsp<CR>", "LSP info")
+          map("n", "<leader>lh", function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = args.buf }), { bufnr = args.buf })
           end, "Toggle inlay hints")
         end,
