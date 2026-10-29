@@ -4,20 +4,23 @@
 # Uses only the official Fedora repositories (no COPR). Run it as your normal
 # user; it calls sudo for dnf when needed.
 #
-# Usage: ./scripts/packages.sh [--cli-only]
+# Usage: ./scripts/packages.sh [--cli-only | --print]
 #
-#   --cli-only   Skip desktop packages (kitty, Fcitx5, snapper, Nerd Font).
-#                Useful inside a toolbox or a container.
+#   --cli-only   Skip desktop packages (kitty, Fcitx5, snapper, asahi-battery,
+#                Nerd Font). Useful inside a toolbox or a container.
+#   --print      Print every dnf package name and exit (used by CI).
 
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CLI_ONLY=0
+PRINT=0
 for arg in "$@"; do
     case "$arg" in
         --cli-only) CLI_ONLY=1 ;;
+        --print) PRINT=1 ;;
         -h | --help)
-            sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+            sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
             exit 0
             ;;
         *)
@@ -56,9 +59,16 @@ DESKTOP_PACKAGES=(
     kitty
     # Vietnamese input
     fcitx5 fcitx5-unikey kcm-fcitx5 fcitx5-autostart
-    # Btrfs snapshots
+    # Btrfs snapshots (configure with scripts/snapshots.sh)
     snapper
+    # Keeps the battery charge limit across reboots on Apple Silicon
+    asahi-battery
 )
+
+if [[ $PRINT -eq 1 ]]; then
+    printf '%s\n' "${CLI_PACKAGES[@]}" "${DESKTOP_PACKAGES[@]}"
+    exit 0
+fi
 
 packages=("${CLI_PACKAGES[@]}")
 [[ $CLI_ONLY -eq 1 ]] || packages+=("${DESKTOP_PACKAGES[@]}")
@@ -148,12 +158,17 @@ if [[ -d "$OMF_DIR" ]]; then
     info "Oh My Fish already installed"
 else
     info "Installing Oh My Fish"
+    # The OMF installer rewrites conf.d/omf.fish (in the repo once install.sh
+    # has linked ~/.config/fish). Save the current file and put it back after.
+    omf_conf="$DOTFILES/.config/fish/conf.d/omf.fish"
+    omf_saved="$(mktemp)"
+    cp "$omf_conf" "$omf_saved"
     tmp="$(mktemp)"
     curl -fsSL -o "$tmp" https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install
     fish "$tmp" --noninteractive --yes
     rm -f "$tmp"
-    # The OMF installer rewrites conf.d/omf.fish; keep the repo's version.
-    git -C "$DOTFILES" checkout -- .config/fish/conf.d/omf.fish 2>/dev/null || true
+    cp "$omf_saved" "$omf_conf"
+    rm -f "$omf_saved"
 fi
 fish -c 'omf install agnoster; omf theme agnoster' || warn "Could not set the agnoster theme"
 
@@ -163,8 +178,9 @@ if [[ $CLI_ONLY -eq 0 ]]; then
 
 Next steps:
   1. ./install.sh                       # link the configs, if you have not yet
-  2. ./scripts/battery-limit.sh         # optional: charge limit 70-80%
-  3. chsh -s /usr/bin/fish              # optional: make fish your login shell
-  4. System Settings > Keyboard > Virtual Keyboard > Fcitx 5, then log out and back in
+  2. ./scripts/battery-limit.sh         # optional: stop charging at 80%
+  3. ./scripts/snapshots.sh             # optional: Btrfs snapshots with snapper
+  4. chsh -s /usr/bin/fish              # optional: make fish your login shell
+  5. System Settings > Keyboard > Virtual Keyboard > Fcitx 5, then log out and back in
 EOF
 fi

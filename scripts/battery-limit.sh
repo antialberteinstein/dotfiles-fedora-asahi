@@ -1,57 +1,61 @@
 #!/usr/bin/env bash
-# Keep the battery between START% and END% on Apple Silicon Macs running
-# Asahi Linux, and make the limit survive reboots.
+# Set the battery charge limit on Apple Silicon Macs running Asahi Linux.
 #
-# KDE's charge limit setting resets to 100% on reboot with the macsmc-battery
-# driver, so this installs a small systemd service that reapplies it at boot.
+# Persistence is handled by Fedora's asahi-battery package (from the Asahi
+# project): it saves charge_control_end_threshold whenever it changes and
+# restores it at boot. So the limit you set here, or in KDE System Settings
+# > Power Management, survives reboots.
 #
-# Usage: ./scripts/battery-limit.sh [START END]   (default: 70 80)
-#        ./scripts/battery-limit.sh --disable      (charge to 100% again)
+# Usage: ./scripts/battery-limit.sh [END]     (default: 80)
+#        ./scripts/battery-limit.sh --disable  (charge to 100% again)
 
 set -euo pipefail
 
 BATTERY=/sys/class/power_supply/macsmc-battery
-SERVICE=/etc/systemd/system/battery-limit.service
+THRESHOLD="$BATTERY/charge_control_end_threshold"
+OLD_SERVICE=/etc/systemd/system/battery-limit.service
 
-if [[ "${1:-}" == "--disable" ]]; then
-    sudo systemctl disable --now battery-limit.service 2>/dev/null || true
-    sudo rm -f "$SERVICE"
-    sudo systemctl daemon-reload
-    echo 100 | sudo tee "$BATTERY/charge_control_end_threshold" >/dev/null
-    echo "Charge limit removed."
-    exit 0
-fi
+case "${1:-}" in
+    --disable) END=100 ;;
+    -h | --help)
+        sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
+        exit 0
+        ;;
+    *) END="${1:-80}" ;;
+esac
 
-START="${1:-70}"
-END="${2:-80}"
-
-if [[ ! -e "$BATTERY/charge_control_end_threshold" ]]; then
+if [[ ! -e "$THRESHOLD" ]]; then
     echo "No macsmc-battery charge control found. This script is for Apple Silicon Macs on Asahi Linux." >&2
     exit 1
 fi
 
-if ! [[ "$START" =~ ^[0-9]+$ && "$END" =~ ^[0-9]+$ ]] || ((START >= END || END > 100)); then
-    echo "START and END must be numbers with START < END <= 100." >&2
+if ! [[ "$END" =~ ^[0-9]+$ ]] || ((END < 50 || END > 100)); then
+    echo "END must be a number from 50 to 100." >&2
     exit 1
 fi
 
-sudo tee "$SERVICE" >/dev/null <<EOF
-[Unit]
-Description=Battery charge limit (${START}-${END}%)
-ConditionPathExists=$BATTERY/charge_control_end_threshold
+if ! rpm -q asahi-battery >/dev/null 2>&1; then
+    echo "Installing asahi-battery so the limit survives reboots"
+    sudo dnf install -y asahi-battery
+fi
 
-[Service]
-Type=oneshot
-ExecStart=/bin/sh -c 'echo $START > $BATTERY/charge_control_start_threshold; echo $END > $BATTERY/charge_control_end_threshold'
-RemainAfterExit=yes
+# Remove the service that older versions of this script installed; it would
+# overwrite the limit at every boot.
+if [[ -f "$OLD_SERVICE" ]]; then
+    echo "Removing the old battery-limit.service"
+    sudo systemctl disable --now battery-limit.service 2>/dev/null || true
+    sudo rm -f "$OLD_SERVICE"
+    sudo systemctl daemon-reload
+fi
 
-[Install]
-WantedBy=multi-user.target
-EOF
+echo "$END" | sudo tee "$THRESHOLD" >/dev/null
 
-sudo systemctl daemon-reload
-sudo systemctl enable --now battery-limit.service
-sudo systemctl restart battery-limit.service
-
-echo "Charge limit set: stops at ${END}%, resumes below ${START}%."
-echo "Current end threshold: $(cat "$BATTERY/charge_control_end_threshold")"
+actual="$(cat "$THRESHOLD")"
+if [[ "$actual" != "$END" ]]; then
+    echo "The driver accepted $actual% instead of $END%." >&2
+fi
+if ((actual >= 100)); then
+    echo "Charge limit removed: the battery charges to 100%."
+else
+    echo "Charge limit set: charging stops at ${actual}%."
+fi

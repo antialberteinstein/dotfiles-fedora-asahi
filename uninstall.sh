@@ -12,21 +12,11 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DRY_RUN=0
 if [[ "${1:-}" == "--dry-run" ]]; then DRY_RUN=1; fi
 
-candidates=(
-    "$HOME/.bashrc"
-    "$HOME/.config/fish"
-    "$HOME/.config/kitty"
-    "$HOME/.config/nvim"
-    "$HOME/.config/tmux"
-    "$HOME/.config/git/config"
-)
-for script in "$DOTFILES"/scripts/bin/*; do
-    if [[ -f "$script" ]]; then
-        candidates+=("$HOME/.local/bin/$(basename "$script")")
-    fi
-done
+# shellcheck source=scripts/links.sh
+source "$DOTFILES/scripts/links.sh"
 
-for path in "${candidates[@]}"; do
+for entry in "${LINKS[@]}"; do
+    path="$HOME/${entry#*:}"
     if [[ -L "$path" && "$(readlink "$path")" == "$DOTFILES"/* ]]; then
         echo "remove  ${path/#$HOME/\~}"
         if [[ $DRY_RUN -eq 0 ]]; then

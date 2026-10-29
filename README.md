@@ -26,7 +26,8 @@ commit, and pull updates on any machine.
 | `.bashrc` | bash, for when you are not in fish |
 | `install.sh` / `uninstall.sh` | link or unlink the configs |
 | `scripts/packages.sh` | install the packages these configs need |
-| `scripts/battery-limit.sh` | keep the battery between 70% and 80% |
+| `scripts/battery-limit.sh` | stop charging at 80% (or any limit you choose) |
+| `scripts/snapshots.sh` | Btrfs snapshots of `/` with snapper |
 
 ## Requirements
 
@@ -44,7 +45,8 @@ cd ~/dotfiles-fedora-asahi
 
 ./install.sh                 # symlink the configs (asks for your git name and email)
 ./scripts/packages.sh        # packages, fonts, lazygit, TPM, Oh My Fish
-./scripts/battery-limit.sh   # optional: charge limit 70-80%
+./scripts/battery-limit.sh   # optional: stop charging at 80%
+./scripts/snapshots.sh       # optional: Btrfs snapshots with snapper
 chsh -s /usr/bin/fish        # optional: make fish your login shell
 ```
 
@@ -68,7 +70,7 @@ Then finish two things by hand:
 - **Neovim:** neovim, tree-sitter-cli, gcc, make, nodejs, npm, python3
 - **Python:** uv
 - **Containers:** podman, podman-compose, toolbox
-- **Desktop:** kitty, fcitx5, fcitx5-unikey, kcm-fcitx5, fcitx5-autostart, snapper
+- **Desktop:** kitty, fcitx5, fcitx5-unikey, kcm-fcitx5, fcitx5-autostart, snapper, asahi-battery
 
 It also installs [lazygit](https://github.com/jesseduffield/lazygit) from its
 release page (it is not in the Fedora repositories), JetBrains Mono Nerd Font,
@@ -156,9 +158,13 @@ reaches them on `localhost`.
 
 ## Apple Silicon notes
 
-- **Charge limit:** KDE's own setting resets to 100% after a reboot on Asahi,
-  which is why `scripts/battery-limit.sh` installs a systemd service instead.
+- **Charge limit:** Fedora's `asahi-battery` package saves the limit
+  whenever it changes and restores it at boot, so you can set it in
+  System Settings > Power Management or with `./scripts/battery-limit.sh 80`.
   Run `./scripts/battery-limit.sh --disable` to charge to 100% again.
+- **Snapshots:** after `./scripts/snapshots.sh`, take one before risky
+  changes with `sudo snapper -c root create -d "before update"` and list
+  them with `snapper -c root list`.
 - **Sleep:** suspend works but drains the battery faster than macOS does.
   Shut down for long breaks.
 - **Containers:** pick images with an `arm64` variant.
