@@ -25,3 +25,14 @@ if [ -d ~/.bashrc.d ]; then
   done
 fi
 unset rc
+
+# In kitty, hand over to fish. Bash stays the login shell everywhere else
+# (Konsole, TTYs, scripts), and running `bash` from fish keeps you in bash.
+if [[ $- == *i* && -n "${KITTY_WINDOW_ID:-}" && -z "${BASH_EXECUTION_STRING:-}" ]] &&
+  command -v fish >/dev/null 2>&1 &&
+  [[ "$(cat "/proc/$PPID/comm" 2>/dev/null)" != fish ]]; then
+  if shopt -q login_shell; then
+    exec fish --login
+  fi
+  exec fish
+fi

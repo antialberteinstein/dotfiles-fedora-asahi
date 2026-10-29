@@ -27,8 +27,6 @@ return {
       start_in_insert = true,
       persist_size = true,
       close_on_exit = true,
-      -- Use fish inside the terminal when it is installed
-      shell = vim.fn.executable("fish") == 1 and "fish" or vim.o.shell,
       float_opts = { border = "curved" },
     },
   },
