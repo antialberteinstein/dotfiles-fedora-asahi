@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: ShellCheck
-        run: shellcheck -x install.sh uninstall.sh scripts/*.sh
+        run: shellcheck -x install.sh uninstall.sh scripts/*.sh && shellcheck -s bash -e SC1090,SC1091,SC2076 .bashrc
 
       - name: StyLua
         uses: JohnnyMorganz/stylua-action@v4
@@ -95,6 +95,17 @@ jobs:
           bash -n .bashrc
           tmux -L ci -f "$HOME/.config/tmux/tmux.conf" new-session -d 'sleep 5'
           tmux -L ci kill-server
+
+      - name: Bash hands over to fish only inside kitty
+        shell: bash
+        run: |
+          set -euo pipefail
+          in_kitty="$(printf 'echo "shell=fish $FISH_VERSION"\n' | KITTY_WINDOW_ID=1 bash -i 2>/dev/null)"
+          echo "$in_kitty"
+          grep -q '^shell=fish [0-9]' <<<"$in_kitty" || { echo "::error::bash did not switch to fish inside kitty"; exit 1; }
+          outside="$(printf 'echo "shell=bash $BASH_VERSION"\n' | env -u KITTY_WINDOW_ID bash -i 2>/dev/null)"
+          echo "$outside"
+          grep -q '^shell=bash [0-9]' <<<"$outside" || { echo "::error::bash switched to fish outside kitty"; exit 1; }
 
       - name: Neovim plugins install
         run: nvim --headless "+Lazy! sync" +qa

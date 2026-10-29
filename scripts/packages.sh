@@ -180,7 +180,6 @@ Next steps:
   1. ./install.sh                       # link the configs, if you have not yet
   2. ./scripts/battery-limit.sh         # optional: stop charging at 80%
   3. ./scripts/snapshots.sh             # optional: Btrfs snapshots with snapper
-  4. chsh -s /usr/bin/fish              # optional: make fish your login shell
-  5. System Settings > Keyboard > Virtual Keyboard > Fcitx 5, then log out and back in
+  4. System Settings > Keyboard > Virtual Keyboard > Fcitx 5, then log out and back in
 EOF
 fi

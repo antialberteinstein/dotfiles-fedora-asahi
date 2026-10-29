@@ -19,11 +19,11 @@ commit, and pull updates on any machine.
 | Path | What it configures |
 | --- | --- |
 | `.config/nvim` | Neovim 0.12 with lazy.nvim, LSP, treesitter, Telescope, Neo-tree, Tokyo Night |
-| `.config/fish` | fish shell with Oh My Fish and the agnoster theme |
+| `.config/fish` | fish shell with Oh My Fish and the agnoster theme, started from bash inside kitty |
 | `.config/kitty` | kitty terminal, JetBrains Mono Nerd Font, Catppuccin Macchiato |
 | `.config/tmux` | tmux with TPM, mouse support, `\|` and `-` splits |
 | `.config/git` | git with Git LFS; your name and email stay out of the repo |
-| `.bashrc` | bash, for when you are not in fish |
+| `.bashrc` | bash, the login shell; hands over to fish inside kitty |
 | `install.sh` / `uninstall.sh` | link or unlink the configs |
 | `scripts/packages.sh` | install the packages these configs need |
 | `scripts/battery-limit.sh` | stop charging at 80% (or any limit you choose) |
@@ -47,7 +47,6 @@ cd ~/dotfiles-fedora-asahi
 ./scripts/packages.sh        # packages, fonts, lazygit, TPM, Oh My Fish
 ./scripts/battery-limit.sh   # optional: stop charging at 80%
 ./scripts/snapshots.sh       # optional: Btrfs snapshots with snapper
-chsh -s /usr/bin/fish        # optional: make fish your login shell
 ```
 
 Anything already at a target path is moved to `<name>.bak-<timestamp>` before
@@ -76,6 +75,13 @@ It also installs [lazygit](https://github.com/jesseduffield/lazygit) from its
 release page (it is not in the Fedora repositories), JetBrains Mono Nerd Font,
 TPM and Oh My Fish. Pass `--cli-only` to skip the desktop packages, for
 example inside a toolbox.
+
+### Shells
+
+Bash stays your login shell, so Konsole, TTYs and scripts use bash as
+usual. Opening **kitty** starts bash, and `.bashrc` immediately switches to
+fish with `exec fish`. The same happens in tmux and Neovim terminals opened
+inside kitty. Type `bash` in fish when you need bash; it stays bash.
 
 ## Update
 
