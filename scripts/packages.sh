@@ -131,7 +131,9 @@ install_font() {
 
 # --- tmux plugin manager -------------------------------------------------
 
-TPM_DIR="$HOME/.config/tmux/plugins/tpm"
+# Clone into the repo copy (git-ignored) so it works whether or not
+# install.sh has linked ~/.config/tmux yet.
+TPM_DIR="$DOTFILES/.config/tmux/plugins/tpm"
 if [[ -d "$TPM_DIR" ]]; then
     info "TPM already installed"
 else
@@ -160,7 +162,7 @@ if [[ $CLI_ONLY -eq 0 ]]; then
     cat <<'EOF'
 
 Next steps:
-  1. ./install.sh                       # link the configs
+  1. ./install.sh                       # link the configs, if you have not yet
   2. ./scripts/battery-limit.sh         # optional: charge limit 70-80%
   3. chsh -s /usr/bin/fish              # optional: make fish your login shell
   4. System Settings > Keyboard > Virtual Keyboard > Fcitx 5, then log out and back in
