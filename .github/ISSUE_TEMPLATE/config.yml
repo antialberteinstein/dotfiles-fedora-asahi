@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Asahi Linux hardware support
+    url: https://asahilinux.org/docs/
+    about: Problems with drivers, booting or hardware that are not caused by these dotfiles belong upstream.
