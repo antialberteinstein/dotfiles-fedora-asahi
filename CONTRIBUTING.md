@@ -41,7 +41,7 @@ are very welcome.
 If you changed a shell script, run [ShellCheck](https://www.shellcheck.net):
 
 ```sh
-shellcheck -x install.sh uninstall.sh scripts/*.sh
+shellcheck -x install.sh uninstall.sh update.sh scripts/*.sh .local/bin/*
 ```
 
 To check that Neovim starts cleanly, link the config under a test name so

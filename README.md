@@ -23,6 +23,7 @@ commit, and pull updates on any machine.
 | `.config/tmux` | tmux with a Tokyo Night status bar, vim-tmux-navigator and a LazyGit popup |
 | `.config/git` | git with Git LFS; your name and email stay out of the repo |
 | `.bashrc` | bash, the login shell; hands over to fish inside kitty |
+| `.local/bin` | your own commands, each linked into `~/.local/bin` (e.g. `set-backlight`) |
 | `install.sh` / `uninstall.sh` | link or unlink the configs |
 | `update.sh` | pull the latest version and update configs, packages and plugins |
 | `scripts/packages.sh` | install the packages these configs need |
@@ -221,10 +222,11 @@ reaches them on `localhost`.
   changes with `sudo snapper -c root create -d "before update"` and list
   them with `snapper -c root list`.
 - **Keyboard backlight:** the M2 MacBook Air has no backlight keys, and KDE may
-  not show a keyboard brightness slider. Use
-  `brightnessctl -d kbd_backlight set 50%`, or bind
-  `brightnessctl -d kbd_backlight set +10%` and `… set 10%-` to keys in
-  System Settings > Keyboard > Shortcuts > Add New > Command or Script.
+  not show a keyboard brightness slider. Use `set-backlight`: `set-backlight 50`
+  (or `50%`), `set-backlight up` / `down` (10% steps, or `up 20`), `max`,
+  `off`, and no argument to show the level. Bind `set-backlight up` and
+  `set-backlight down` to keys in System Settings > Keyboard > Shortcuts >
+  Add New > Command or Script.
 - **Sleep:** suspend works but drains the battery faster than macOS does.
   Shut down for long breaks.
 - **Containers:** pick images with an `arm64` variant.

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Control the keyboard backlight (kbd_backlight) with brightnessctl.
+#
+# Usage: set-backlight                 show the current level
+#        set-backlight 50 | 50%        set the level to 50%
+#        set-backlight up [10 | 10%]   brighter by 10% (default step 10)
+#        set-backlight down [10 | 10%] dimmer by 10%
+#        set-backlight max | off       100% / 0%
+#
+# Bind `set-backlight up` and `set-backlight down` to keys in
+# System Settings > Keyboard > Shortcuts > Add New > Command or Script.
+
+set -euo pipefail
+
+DEVICE=kbd_backlight
+DEFAULT_STEP=10
+
+usage() {
+    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+die() {
+    echo "set-backlight: $*" >&2
+    exit 1
+}
+
+# Accept "50" or "50%" between 0 and 100; print the number.
+percent() {
+    local value="${1%\%}"
+    if ! [[ "$value" =~ ^[0-9]+$ ]] || ((10#$value > 100)); then
+        die "expected a percentage from 0 to 100, got '$1'"
+    fi
+    echo "$((10#$value))"
+}
+
+current() {
+    # Machine-readable output: device,class,current,percent,max
+    brightnessctl -d "$DEVICE" -m info | cut -d, -f4
+}
+
+set_level() {
+    brightnessctl -q -d "$DEVICE" set "$1"
+    echo "Keyboard backlight: $(current)"
+}
+
+command -v brightnessctl >/dev/null 2>&1 ||
+    die "brightnessctl is not installed (sudo dnf install brightnessctl)"
+brightnessctl -d "$DEVICE" info >/dev/null 2>&1 ||
+    die "no keyboard backlight found ($DEVICE)"
+
+# percent runs in a subshell here, so check its result before using it
+# (a die inside $(...) would only exit that subshell).
+case "${1:-}" in
+    "")
+        echo "Keyboard backlight: $(current)"
+        ;;
+    -h | --help)
+        usage
+        ;;
+    up | down)
+        (($# <= 2)) || die "too many arguments (see set-backlight --help)"
+        step="$(percent "${2:-$DEFAULT_STEP}")" || exit 1
+        if [[ "$1" == up ]]; then
+            set_level "+${step}%"
+        else
+            set_level "${step}%-"
+        fi
+        ;;
+    max)
+        set_level 100%
+        ;;
+    off)
+        set_level 0
+        ;;
+    *)
+        (($# == 1)) || die "too many arguments (see set-backlight --help)"
+        level="$(percent "$1")" || exit 1
+        set_level "${level}%"
+        ;;
+esac
