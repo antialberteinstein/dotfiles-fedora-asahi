@@ -7,7 +7,7 @@
 # Usage: ./scripts/packages.sh [--cli-only]
 #
 #   --cli-only   Skip desktop packages (kitty, Fcitx5, snapper, asahi-battery,
-#                Nerd Font). Useful inside a toolbox or a container.
+#                brightnessctl, Nerd Font). Useful inside a toolbox or a container.
 
 set -euo pipefail
 
@@ -63,6 +63,8 @@ DESKTOP_PACKAGES=(
     snapper
     # Keeps the battery charge limit across reboots on Apple Silicon
     asahi-battery
+    # Keyboard backlight control (MacBooks have no backlight keys)
+    brightnessctl
 )
 
 packages=("${CLI_PACKAGES[@]}")

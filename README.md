@@ -70,7 +70,7 @@ Then finish two things by hand:
 - **C/C++:** gcc-c++, clang-tools-extra (clangd)
 - **Python:** uv
 - **Containers:** podman, podman-compose, toolbox
-- **Desktop:** kitty, fcitx5, fcitx5-unikey, kcm-fcitx5, fcitx5-autostart, snapper, asahi-battery
+- **Desktop:** kitty, fcitx5, fcitx5-unikey, kcm-fcitx5, fcitx5-autostart, snapper, asahi-battery, brightnessctl
 
 It also installs [lazygit](https://github.com/jesseduffield/lazygit) from its
 release page (it is not in the Fedora repositories), JetBrains Mono Nerd Font,
@@ -220,6 +220,11 @@ reaches them on `localhost`.
 - **Snapshots:** after `./scripts/snapshots.sh`, take one before risky
   changes with `sudo snapper -c root create -d "before update"` and list
   them with `snapper -c root list`.
+- **Keyboard backlight:** the M2 MacBook Air has no backlight keys, and KDE may
+  not show a keyboard brightness slider. Use
+  `brightnessctl -d kbd_backlight set 50%`, or bind
+  `brightnessctl -d kbd_backlight set +10%` and `… set 10%-` to keys in
+  System Settings > Keyboard > Shortcuts > Add New > Command or Script.
 - **Sleep:** suspend works but drains the battery faster than macOS does.
   Shut down for long breaks.
 - **Containers:** pick images with an `arm64` variant.
