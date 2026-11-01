@@ -4,6 +4,12 @@
 # lazygit and other user binaries
 fish_add_path -g $HOME/.local/bin
 
+# Rust (rustup, cargo install). Install with `rustup-init --no-modify-path`
+# so rustup does not edit these files.
+if test -d $HOME/.cargo/bin
+    fish_add_path -g $HOME/.cargo/bin
+end
+
 set -gx EDITOR nvim
 
 if status is-interactive

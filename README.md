@@ -54,6 +54,13 @@ Anything already at a target path is moved to `<name>.bak-<timestamp>` before
 it is replaced, so nothing is lost. Both scripts are safe to run again.
 Use `./install.sh --dry-run` to see what would change first.
 
+Your git name and email go in `~/.config/git/config.local`, which is not part
+of this repository. Keep other machine-specific git settings there too.
+`gh auth login` (or `gh auth setup-git`) writes its credential helper into
+`~/.config/git/config`, a file in this repository, so move those
+`[credential ...]` sections into `config.local` and run
+`git checkout -- .config/git/config`.
+
 Then finish two things by hand:
 
 1. **Vietnamese input (Fcitx5 + Unikey):** System Settings > Keyboard >
@@ -70,6 +77,7 @@ Then finish two things by hand:
 - **Neovim:** neovim, tree-sitter-cli, gcc, make, nodejs, npm, python3
 - **C/C++:** gcc-c++, clang-tools-extra (clangd)
 - **Python:** uv
+- **Rust:** rustup
 - **Containers:** podman, podman-compose, toolbox
 - **Desktop:** kitty, fcitx5, fcitx5-unikey, kcm-fcitx5, fcitx5-autostart, snapper, asahi-battery, brightnessctl
 
@@ -127,7 +135,7 @@ groups, or press `?` to search all keymaps.
 
 | Prefix | Plugin | Keys |
 | --- | --- | --- |
-| `Space f` | find (Telescope) | `ff` files · `fg` grep · `fw` word under cursor · `fb` buffers · `fr` recent · `fh` help · `fc` commands · `fk` keymaps · `fd` diagnostics · `fe` file browser · `ft` TODOs · `f.` resume |
+| `Space f` | find (Telescope) | `ff` files · `fg` grep · `fw` word under cursor · `fb` buffers · `fr` recent · `fh` help · `fc` commands · `fk` keymaps · `fd` diagnostics · `fe` file browser in the current file's folder · `fE` file browser at the project root · `ft` TODOs · `f.` resume |
 | `Space e` | explorer (Neo-tree) | `ee` toggle · `er` reveal current file · `eg` git status · `eb` buffers |
 | `Space b` | buffers (bufferline) | `bn` next · `bp` previous · `bd` delete · `bo` close others · `bj` jump · `bc` pick to close |
 | `Space l` | LSP | `la` code action · `lr` rename · `lt` type definition · `ll` line diagnostics · `lh` inlay hints · `li` info |
@@ -211,6 +219,25 @@ uv run python main.py
 Services such as databases are better run on the host with
 `podman compose up -d`; the toolbox shares the host network, so your code
 reaches them on `localhost`.
+
+## Rust with rustup
+
+`scripts/packages.sh` installs `rustup`. Set up the toolchain with:
+
+```sh
+rustup-init -y --no-modify-path
+```
+
+Keep `--no-modify-path`: without it rustup appends to `~/.bashrc` and adds
+`~/.config/fish/conf.d/rustup.fish`, which are files in this repository.
+Both shells already add `~/.cargo/bin` to `PATH` when it exists. Install on
+the host rather than in a toolbox: rustup lives in your home directory, which
+a toolbox shares anyway.
+
+If rustup already edited them, undo it with
+`git -C ~/dotfiles-fedora-asahi checkout -- .bashrc`, delete
+`~/.config/fish/conf.d/rustup.fish`, and remove the `.cargo/env` line from
+`~/.bash_profile`.
 
 ## Apple Silicon notes
 

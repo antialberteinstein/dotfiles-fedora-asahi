@@ -11,6 +11,12 @@ if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
 fi
 export PATH
 
+# Rust (rustup, cargo install). Install with `rustup-init --no-modify-path`
+# so rustup does not edit this file.
+if [[ -d "$HOME/.cargo/bin" && ":$PATH:" != *":$HOME/.cargo/bin:"* ]]; then
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
 export EDITOR=nvim
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:

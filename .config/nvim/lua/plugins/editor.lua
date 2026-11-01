@@ -78,7 +78,12 @@ return {
       { "<leader>fc", "<Cmd>Telescope commands<CR>", desc = "Commands" },
       { "<leader>fk", "<Cmd>Telescope keymaps<CR>", desc = "Keymaps" },
       { "<leader>fd", "<Cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
-      { "<leader>fe", "<Cmd>Telescope file_browser<CR>", desc = "File browser" },
+      {
+        "<leader>fe",
+        "<Cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>",
+        desc = "File browser (current file's folder)",
+      },
+      { "<leader>fE", "<Cmd>Telescope file_browser<CR>", desc = "File browser (project root)" },
       { "<leader>f.", "<Cmd>Telescope resume<CR>", desc = "Resume last search" },
     },
     config = function()

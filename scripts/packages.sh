@@ -51,6 +51,8 @@ CLI_PACKAGES=(
     gcc-c++ clang-tools-extra
     # Python
     uv
+    # Rust toolchain installer (run rustup-init --no-modify-path afterwards)
+    rustup
     # Containers
     podman podman-compose toolbox
 )
