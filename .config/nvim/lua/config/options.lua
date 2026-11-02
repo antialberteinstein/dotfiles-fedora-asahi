@@ -8,7 +8,9 @@ opt.undofile = true
 
 -- Clipboard: share with the system (needs wl-clipboard on Wayland)
 opt.clipboard = "unnamedplus"
-opt.mouse = "a"
+-- Mouse in normal and visual mode only: a palm brushing the touchpad while
+-- typing cannot move the cursor in insert mode.
+opt.mouse = "nv"
 
 -- Indentation: 4 spaces
 opt.tabstop = 4
