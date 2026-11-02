@@ -162,6 +162,10 @@ Keys without the leader:
 | `grr` / `gri` | References / implementations |
 | `]c` / `[c` | Next / previous git hunk |
 
+The mouse works in normal and visual mode only. In insert mode it is ignored,
+so a palm touching the touchpad cannot move the cursor; press `Esc` to click
+or scroll.
+
 Completion: `Enter` accepts, `Tab`/`Shift+Tab` move through the list and
 snippet fields, `Ctrl+Space` opens the menu.
 
