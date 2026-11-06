@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Dotfiles for **Fedora Asahi Remix** on Apple Silicon Macs with **KDE Plasma**:
+Dotfiles for **Fedora Asahi Remix** with **KDE Plasma**:
 Neovim, fish, kitty, tmux and git in one **Tokyo Night** theme, plus scripts
 that install and update everything from the official Fedora repositories.
 
@@ -32,7 +32,7 @@ commit, and pull updates on any machine.
 
 ## Requirements
 
-- An Apple Silicon Mac running Fedora Asahi Remix 44 with KDE Plasma
+- Fedora Asahi Remix 44 with KDE Plasma
 - `git` and `sudo`
 
 Regular Fedora 44 on x86_64 should work too, except for the battery limit,
@@ -243,7 +243,7 @@ If rustup already edited them, undo it with
 `~/.config/fish/conf.d/rustup.fish`, and remove the `.cargo/env` line from
 `~/.bash_profile`.
 
-## Apple Silicon notes
+## Hardware notes
 
 - **Charge limit:** Fedora's `asahi-battery` package saves the limit
   whenever it changes and restores it at boot, so you can set it in
@@ -252,19 +252,19 @@ If rustup already edited them, undo it with
 - **Snapshots:** after `./scripts/snapshots.sh`, take one before risky
   changes with `sudo snapper -c root create -d "before update"` and list
   them with `snapper -c root list`.
-- **Keyboard backlight:** the M2 MacBook Air has no backlight keys, and KDE may
+- **Keyboard backlight:** some keyboards have no backlight keys, and KDE may
   not show a keyboard brightness slider. Use `set-backlight`: `set-backlight 50`
   (or `50%`), `set-backlight up` / `down` (10% steps, or `up 20`), `max`,
   `off`, and no argument to show the level. Bind `set-backlight up` and
   `set-backlight down` to keys in System Settings > Keyboard > Shortcuts >
   Add New > Command or Script.
-- **Sleep:** suspend works but drains the battery faster than macOS does.
+- **Sleep:** suspend works but drains the battery noticeably.
   Shut down for long breaks.
 - **Containers:** pick images with an `arm64` variant.
 
 ## Contributing
 
-Bug reports and fixes are welcome, especially for other Apple Silicon models.
+Bug reports and fixes are welcome, especially for other hardware.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the
 [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -273,8 +273,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and the
 - Adapted from [antialberteinstein/dotfiles](https://github.com/antialberteinstein/dotfiles).
 - [Tokyo Night](https://github.com/folke/tokyonight.nvim) by Folke Lemaitre
   (MIT): the Neovim theme and its kitty, tmux and fish color files.
-- [Asahi Linux](https://asahilinux.org) and the Fedora Asahi SIG for making
-  Linux on Apple Silicon possible.
+- [Asahi Linux](https://asahilinux.org) and the Fedora Asahi SIG for their
+  work on Fedora Asahi Remix.
 
 ## License
 
